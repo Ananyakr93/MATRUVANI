@@ -34,12 +34,12 @@ MATRUVANI solves this by combining EPDS with **AI-driven speech analysis** to ca
 
 | Layer | Technology | Purpose |
 |---|---|---|
-| **Frontend** | HTML5, Bootstrap 5, Chart.js | ASHA PWA + Medical Officer Dashboard |
+| **Frontend** | HTML5, Vanilla CSS, Chart.js | Medical Officer Dashboard (Standalone) |
 | **Backend** | Flask 3.1, SQLite | REST API, screening data persistence |
-| **AI Layer** | SADE Lite (lexicon-based NLP) | 80-phrase Hindi depression lexicon with weighted scoring |
+| **AI Layer** | SADE Lite v1 (lexicon-based NLP) | 20-phrase Hindi depression lexicon with substring matching |
 | **Privacy** | DPDP Act 2023 compliance | Anonymized IDs, no PII storage, on-device processing |
 | **Escalation** | ReportLab PDF + SMS queue | Auto-generated referral cards + PHC alert system |
-| **Offline** | Service Worker (PWA) | Full offline capability for low-connectivity villages |
+| **Offline** | Service Worker | Basic offline capability for dashboard (via sw.js) |
 
 ---
 
@@ -47,30 +47,28 @@ MATRUVANI solves this by combining EPDS with **AI-driven speech analysis** to ca
 
 ```bash
 # 1. Clone and enter the project
-git clone https://github.com/CareCoders/matruvani.git && cd matruvani
+git clone https://github.com/Ananyakr93/MATRUVANI.git && cd MATRUVANI
 
 # 2. Run the demo (creates venv, installs deps, seeds DB, starts server)
 chmod +x run_demo.sh && ./run_demo.sh    # macOS/Linux
-run_demo.bat                              # Windows
+.\run_demo.bat                           # Windows
 
 # 3. Open in browser → auto-launched at http://127.0.0.1:5000
 ```
 
-That's it. **Three commands.** The demo seeds 50 synthetic patients, starts Flask, and opens both the ASHA screening app and the Medical Officer dashboard.
+That's it. **Three commands.** The demo seeds 50 synthetic patients, starts Flask, and opens the Medical Officer dashboard.
 
 ---
 
 ## 🎬 Demo Walkthrough
 
-Follow these 5 steps during the video demo:
+Follow these steps during the video demo:
 
 | Step | Action | What to Show |
 |---|---|---|
-| **1** | Open the **ASHA PWA** at `http://127.0.0.1:5000/` | Mobile-first screening form with EPDS questionnaire + Hindi voice prompt |
-| **2** | Complete a screening: select a patient, fill EPDS answers, speak freely in Hindi | Live EPDS score computation + risk classification (GREEN / YELLOW / RED) |
-| **3** | Trigger a **Divergence Flag**: low EPDS score (≤ 9) but speak distress phrases like "मैं बोझ हूँ" | AI detects mismatch → orange divergence banner appears → referral escalation |
-| **4** | Open the **MO Dashboard** at `http://127.0.0.1:5000/dashboard.html` | KPI cards with animations, weekly trend chart, village heatmap, divergence tracker |
-| **5** | **Generate a referral PDF** via the API → downloads a professional A4 referral card | Color-coded EPDS score, risk actions, eSanjeevani link, DPDP-compliant footer |
+| **1** | Open the **MO Dashboard** at `http://127.0.0.1:5000/` | KPI cards with animations, weekly trend chart, village heatmap, divergence tracker |
+| **2** | Review **Divergence Flags** | The "Clinical Divergence Tracker" table shows cases where AI detected speech mismatch with EPDS. |
+| **3** | **Generate a referral PDF** via the API → downloads a professional A4 referral card | Color-coded EPDS score, risk actions, eSanjeevani link, DPDP-compliant footer |
 
 ### API Quick Test (Step 5)
 ```bash
@@ -79,6 +77,7 @@ curl -X POST http://127.0.0.1:5000/api/generate_referral \
   -d '{"patient_id":"MV-2026-0042","epds_score":17,"divergence_flag":true,"asha_name":"Sunita Devi","village":"Rampur"}' \
   --output referral.pdf
 ```
+*(Note for Windows: Use `Invoke-WebRequest` in PowerShell, or escape double quotes in cmd if using curl)*
 
 ---
 
@@ -89,16 +88,16 @@ curl -X POST http://127.0.0.1:5000/api/generate_referral \
 │                        MATRUVANI SYSTEM                            │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  ┌──────────────┐     ┌──────────────┐     ┌──────────────────┐    │
-│  │  ASHA PWA    │     │  MO Dashboard│     │  PHC / District  │    │
-│  │  (index.html)│     │(dashboard.html)    │  Hospital        │    │
-│  │              │     │              │     │                  │    │
-│  │ • EPDS Form  │     │ • KPI Cards  │     │ • Referral PDF   │    │
-│  │ • Voice Input│     │ • Trend Chart│     │ • eSanjeevani    │    │
-│  │ • Offline PWA│     │ • Heatmap    │     │ • SMS Alert      │    │
-│  └──────┬───────┘     └──────┬───────┘     └────────▲─────────┘    │
-│         │                    │                      │              │
-│         ▼                    ▼                      │              │
+│  ┌────────────────────────┐    ┌──────────────────┐    │
+│  │  MO Dashboard          │    │  PHC / District  │    │
+│  │  (dashboard.html)      │    │  Hospital        │    │
+│  │                        │    │                  │    │
+│  │ • KPI Cards            │    │ • Referral PDF   │    │
+│  │ • Trend Chart          │    │ • eSanjeevani    │    │
+│  │ • Heatmap & Tracker    │    │ • SMS Alert      │    │
+│  └───────────┬────────────┘    └────────▲─────────┘    │
+│              │                          │              │
+│              ▼                          │              │
 │  ┌──────────────────────────────────────────────────┴──────────┐   │
 │  │                    Flask REST API (app.py)                  │   │
 │  │                                                             │   │
@@ -111,10 +110,10 @@ curl -X POST http://127.0.0.1:5000/api/generate_referral \
 │             ▼                  ▼                                    │
 │  ┌──────────────────┐  ┌──────────────────────────────────────┐    │
 │  │  SQLite Database  │  │  SADE Lite — AI Lexicon Engine       │    │
-│  │  (matruvani.db)   │  │  (sade_lite.py)                      │    │
+│  │  (matruvani.db)   │  │  (lexicon.py / sade_lite.py)         │    │
 │  │                   │  │                                      │    │
-│  │  • patients       │  │  80 Hindi phrases × 5 categories     │    │
-│  │  • screenings     │  │  Weighted scoring (1.0 – 2.0)        │    │
+│  │  • patients       │  │  Hindi phrases × categories          │    │
+│  │  • screenings     │  │  Weighted/Substring matching         │    │
 │  │  • asha_workers   │  │  Divergence detection algorithm      │    │
 │  │  • sms_queue      │  │  AMS → GREEN / YELLOW / RED          │    │
 │  └──────────────────┘  └──────────────────────────────────────┘    │
@@ -195,7 +194,10 @@ This catches the **85% of cases** that self-report-only screening misses.
 ## 🧪 Testing
 
 ```bash
-# Run all unit tests
+# Install pytest first if not available
+pip install pytest
+
+# Run all unit tests for the SADE Lite v2 engine
 python -m pytest test_sade_lite.py -v
 
 # Expected: 14 passed ✓
