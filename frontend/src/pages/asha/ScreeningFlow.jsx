@@ -110,19 +110,19 @@ export default function ScreeningFlow() {
 
         {/* Toggle Status */}
         <div>
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">स्थिति</label>
+          <label className="text-sm font-semibold text-gray-700 mb-2 block">{t('demo.status')}</label>
           <div className="flex bg-gray-100 p-1 rounded-xl">
             <button
               onClick={() => setMotherData({ isPregnant: true })}
               className={`flex-1 py-3 rounded-lg text-sm font-semibold transition-colors ${motherData.isPregnant ? 'bg-white shadow text-green-800' : 'text-gray-500'}`}
             >
-              गर्भवती
+              {t('demo.pregnant')}
             </button>
             <button
               onClick={() => setMotherData({ isPregnant: false })}
               className={`flex-1 py-3 rounded-lg text-sm font-semibold transition-colors ${!motherData.isPregnant ? 'bg-white shadow text-green-800' : 'text-gray-500'}`}
             >
-              प्रसव हुआ
+              {t('demo.postpartum')}
             </button>
           </div>
         </div>
@@ -130,38 +130,38 @@ export default function ScreeningFlow() {
         {/* Conditional Inputs */}
         {motherData.isPregnant ? (
           <div>
-            <label className="text-sm font-semibold text-gray-700 block mb-2">गर्भावस्था का सप्ताह (1-40)</label>
+            <label className="text-sm font-semibold text-gray-700 block mb-2">{t('screening.weeksPregnant')}</label>
             <input
               type="range" min="1" max="40"
               value={motherData.gestationalWeek}
               onChange={(e) => setMotherData({ gestationalWeek: parseInt(e.target.value) })}
               className="w-full accent-green-600"
             />
-            <div className="text-center mt-2 font-bold text-green-800">{motherData.gestationalWeek} सप्ताह</div>
+            <div className="text-center mt-2 font-bold text-green-800">{motherData.gestationalWeek} {t('screening.weeks')}</div>
           </div>
         ) : (
           <div>
-            <label className="text-sm font-semibold text-gray-700 block mb-2">प्रसव के कितने दिन हुए?</label>
+            <label className="text-sm font-semibold text-gray-700 block mb-2">{t('screening.daysPostpartum')}</label>
             <input
               type="number" min="0" max="365"
               value={motherData.daysPostpartum}
               onChange={(e) => setMotherData({ daysPostpartum: e.target.value })}
               className="w-full h-14 border-2 border-green-300 rounded-xl px-4 text-xl"
-              placeholder="दिन दर्ज करें"
+              placeholder={t('screening.daysPlaceholder')}
             />
           </div>
         )}
 
         {/* Village Code */}
         <div>
-          <label className="text-sm font-semibold text-gray-700 block mb-1">ग्राम कोड (रजिस्टर से)</label>
-          <p className="text-xs text-amber-600 italic mb-2">माँ का नाम दर्ज न करें</p>
+          <label className="text-sm font-semibold text-gray-700 block mb-1">{t('screening.villageCodeLabel')}</label>
+          <p className="text-xs text-amber-600 italic mb-2">{t('screening.noNameDesc')}</p>
           <input
             type="text" maxLength={6}
             value={motherData.villageCode}
             onChange={(e) => setMotherData({ villageCode: e.target.value.toUpperCase() })}
             className="w-full h-14 border-2 border-green-300 rounded-xl px-4 text-xl uppercase tracking-widest"
-            placeholder="EX: VIL001"
+            placeholder={t('screening.villageCodePlaceholder')}
           />
         </div>
       </div>
@@ -302,7 +302,7 @@ export default function ScreeningFlow() {
         <textarea
           value={transcript}
           onChange={(e) => setTranscript(e.target.value)}
-          placeholder="माँ जो कह रही हैं, यहाँ लिखें..."
+          placeholder={t('screening.freeSpeech.placeholder')}
           className="flex-1 min-h-[200px] max-h-[300px] w-full border-2 border-gray-200 rounded-2xl p-4 text-lg focus:border-green-400 focus:outline-none resize-none"
         />
 
