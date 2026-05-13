@@ -176,8 +176,12 @@ export function calculate_epds_score(answers) {
 
   let risk_level = 'LOW'
   
-  // Q10 override
-  if (answers[9] > 0) {
+  // Q10 override: If score for Q10 is > 0 (meaning anything other than "Never")
+  const q10_data = EPDS_QUESTIONS[10]
+  const q10_ans = answers[9]
+  const q10_score = q10_data.scoring === 'reverse' ? (3 - q10_ans) : q10_ans
+
+  if (q10_score > 0) {
     risk_level = 'HIGH'
   } else if (total_score >= 13) {
     risk_level = 'HIGH'
