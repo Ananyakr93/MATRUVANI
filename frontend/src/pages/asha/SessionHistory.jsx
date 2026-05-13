@@ -95,7 +95,7 @@ export default function SessionHistory() {
     if (isOnline) {
       if (showLoader && !cached) setIsLoading(true)
       try {
-        const freshData = await get(`/api/v1/screening/history/${ashaId}`)
+        const freshData = await get(`/screening/history/${ashaId}`)
         setSessions(freshData)
         writeCache(ashaId, freshData)
         setCacheTimestamp(Date.now())

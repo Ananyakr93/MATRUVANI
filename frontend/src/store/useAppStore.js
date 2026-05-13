@@ -8,6 +8,7 @@ export const useAppStore = create(
       ashaId: null,
       district: null,
       state: null,
+      phcName: null,
       language: 'en',
       isOnline: navigator.onLine,
       offlineQueueCount: 0,
@@ -19,11 +20,18 @@ export const useAppStore = create(
       setDistrictRole: (distData) => set({ ...distData, role: 'district' }),
       setOnline: (isOnline) => set({ isOnline }),
       incrementQueue: () => set((state) => ({ offlineQueueCount: state.offlineQueueCount + 1 })),
-      clearSession: () => set({ role: null, ashaId: null, district: null, state: null }),
+      clearSession: () => set({ role: null, ashaId: null, district: null, state: null, phcName: null }),
     }),
     {
       name: 'matruvani-storage',
-      partialize: (state) => ({ language: state.language, role: state.role, ashaId: state.ashaId, district: state.district, state: state.state }),
+      partialize: (state) => ({
+        language: state.language,
+        role: state.role,
+        ashaId: state.ashaId,
+        district: state.district,
+        state: state.state,
+        phcName: state.phcName,
+      }),
     }
   )
 )

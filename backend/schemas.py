@@ -5,8 +5,19 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
+class MotherCreate(BaseModel):
+    asha_id: uuid.UUID
+    village_code: str
+    is_pregnant: bool
+    gestational_week: Optional[int] = None
+    days_postpartum: Optional[int] = None
+    district: str
+    state: str
+
+
 class SessionCreate(BaseModel):
-    mother_id: uuid.UUID
+    mother_id: Optional[uuid.UUID] = None
+    mother_data: Optional[MotherCreate] = None
     asha_id: uuid.UUID
     epds_score: int
     epds_answers: List[int]

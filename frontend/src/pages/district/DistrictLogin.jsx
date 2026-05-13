@@ -4,17 +4,12 @@ import { ChevronLeft } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useTranslation } from '@/hooks/useTranslation'
-
-const STATES = ["Karnataka"] // Hackathon scope
-const DISTRICTS = [
-  "Bengaluru Urban", "Bengaluru Rural", "Ramanagara", "Tumakuru", 
-  "Mysuru", "Mandya", "Hassan", "Kolar", "Chikkaballapura"
-]
+import { KARNATAKA_DISTRICTS, getDistrictLabel } from '@/lib/districts'
 
 export default function DistrictLogin() {
   const navigate = useNavigate()
   const { setDistrictRole } = useAppStore()
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   
   const [state, setState] = useState("Karnataka")
   const [district, setDistrict] = useState('')
@@ -62,8 +57,8 @@ export default function DistrictLogin() {
                 <SelectValue placeholder={t('asha.login.districtPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                {DISTRICTS.map(d => (
-                  <SelectItem key={d} value={d} className="text-lg">{d}</SelectItem>
+                {KARNATAKA_DISTRICTS.map(d => (
+                  <SelectItem key={d} value={d} className="text-lg">{getDistrictLabel(d, language)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

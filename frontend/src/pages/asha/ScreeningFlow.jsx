@@ -70,7 +70,7 @@ export default function ScreeningFlow() {
 
       if (isOnline) {
         try {
-          const res = await post('/api/v1/screening/analyze', { answers, transcript, language })
+          const res = await post('/screening/analyze', { answers, transcript, language })
           clearDraft()
           navigate('/asha/result', { state: { result: res, motherData, answers, transcript } })
         } catch (e) {

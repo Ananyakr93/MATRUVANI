@@ -10,7 +10,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 export default function ResultCard() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { ashaId, isOnline, language } = useAppStore()
+  const { ashaId, district, state, isOnline, language } = useAppStore()
   const { t } = useTranslation()
 
   const stateData = location.state || {}
@@ -34,7 +34,15 @@ export default function ResultCard() {
 
     const saveSession = async () => {
       const payload = {
-        mother_id: "00000000-0000-0000-0000-000000000000", // placeholder mother UUID for hackathon
+        mother_data: {
+          asha_id: ashaId,
+          village_code: motherData.villageCode,
+          is_pregnant: motherData.isPregnant,
+          gestational_week: motherData.gestationalWeek ? parseInt(motherData.gestationalWeek) : null,
+          days_postpartum: motherData.daysPostpartum ? parseInt(motherData.daysPostpartum) : null,
+          district: district || "Unknown",
+          state: state || "Karnataka"
+        },
         asha_id: ashaId,
         epds_score: result.epds_score,
         epds_answers: stateData.answers || Array(10).fill(0),
@@ -47,7 +55,7 @@ export default function ResultCard() {
 
       if (isOnline && !result.isOffline) {
         try {
-          const res = await post('/api/v1/screening/session', payload)
+          const res = await post('/screening/session', payload)
           setSessionRecord(res)
           setSaveStatus("✓") // Or a translated saved string if available
           toast.success("✓")
@@ -84,7 +92,7 @@ export default function ResultCard() {
     }
     setSmsStatus("loading")
     try {
-      await post('/api/v1/sms/send-referral', {
+      await post('/sms/send-referral', {
         session_id: sessionRecord.id,
         phc_phone: phcData.phone,
         phc_name: phcData.name,

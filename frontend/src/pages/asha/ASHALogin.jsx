@@ -12,20 +12,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useTranslation } from '@/hooks/useTranslation'
+import { KARNATAKA_DISTRICTS, getDistrictLabel } from '@/lib/districts'
 
-const DISTRICTS = [
-  "Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", 
-  "Bidar", "Chamarajanagar", "Chikkaballapura", "Chikkamagaluru", "Chitradurga", 
-  "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", 
-  "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", 
-  "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", 
-  "Tumakuru", "Udupi", "Uttara Kannada", "Vijayanagara", "Vijayapura", "Yadgir"
-]
+
 
 export default function ASHALogin() {
   const navigate = useNavigate()
   const { setAsha } = useAppStore()
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   
   const [phone, setPhone] = useState('')
   const [district, setDistrict] = useState('')
@@ -51,7 +45,7 @@ export default function ASHALogin() {
       
       try {
         // Attempt login
-        const res = await post('/api/v1/asha/login', { phone_hash })
+        const res = await post('/asha/login', { phone_hash })
         setAsha({
           ashaId: res.asha_id,
           district: res.district,
@@ -84,7 +78,7 @@ export default function ASHALogin() {
     setError(null)
     try {
       const phone_hash = await sha256(phone)
-      const res = await post('/api/v1/asha/register', {
+      const res = await post('/asha/register', {
         phone_hash,
         district,
         sub_centre: subCentre,
@@ -178,8 +172,8 @@ export default function ASHALogin() {
                   <SelectValue placeholder={t('asha.login.districtPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {DISTRICTS.map(d => (
-                    <SelectItem key={d} value={d} className="text-lg">{d}</SelectItem>
+                  {KARNATAKA_DISTRICTS.map(d => (
+                    <SelectItem key={d} value={d} className="text-lg">{getDistrictLabel(d, language)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

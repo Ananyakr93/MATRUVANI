@@ -13,23 +13,50 @@ from backend.schemas import (
     ScreeningHistoryItem,
     SessionListItem,
     ReferralItem,
+    MotherCreate,
 )
 
 router = APIRouter(prefix="/screening", tags=["Screening"])
 
-def send_high_risk_sms_task(session_id: uuid.UUID, village_code: str):
-    # Simulated SMS sending in background
-    print(f"BACKGROUND SMS: MATRUVANI: Village [{village_code}] HIGH risk EPDS screening. Session: {str(session_id)[:8]}. Please follow up. -NHM")
-    # For a real implementation, you would query the PHC for this village and hit MSG91
+@router.post("/mother", response_model=MotherRecord)
+def create_mother(data: MotherCreate, db: Session = Depends(get_session)):
+    new_mother = MotherRecord(
+        asha_id=data.asha_id,
+        village_code=data.village_code,
+        is_pregnant=data.is_pregnant,
+        gestational_week=data.gestational_week,
+        days_postpartum=data.days_postpartum,
+        district=data.district,
+        state=data.state
+    )
+    db.add(new_mother)
+    db.commit()
+    db.refresh(new_mother)
+    return new_mother
 
 @router.post("/session", response_model=SessionResponse)
 def create_session(
     data: SessionCreate, 
-    background_tasks: BackgroundTasks,
     db: Session = Depends(get_session)
 ):
+    mother_id = data.mother_id
+    if not mother_id and data.mother_data:
+        new_mother = MotherRecord(
+            asha_id=data.mother_data.asha_id,
+            village_code=data.mother_data.village_code,
+            is_pregnant=data.mother_data.is_pregnant,
+            gestational_week=data.mother_data.gestational_week,
+            days_postpartum=data.mother_data.days_postpartum,
+            district=data.mother_data.district,
+            state=data.mother_data.state
+        )
+        db.add(new_mother)
+        db.commit()
+        db.refresh(new_mother)
+        mother_id = new_mother.id
+        
     new_session = ScreeningSession(
-        mother_id=data.mother_id,
+        mother_id=mother_id,
         asha_id=data.asha_id,
         epds_score=data.epds_score,
         epds_answers=json.dumps(data.epds_answers),
@@ -44,11 +71,6 @@ def create_session(
     db.commit()
     db.refresh(new_session)
     
-    if new_session.risk_level == 'HIGH':
-        mother = db.get(MotherRecord, new_session.mother_id)
-        village_code = mother.village_code if mother else "UNKNOWN"
-        background_tasks.add_task(send_high_risk_sms_task, new_session.id, village_code)
-        
     return new_session
 
 @router.get("/session/{session_id}", response_model=SessionResponse)

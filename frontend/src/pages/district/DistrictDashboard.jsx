@@ -27,9 +27,9 @@ export default function DistrictDashboard() {
     setIsLoading(true)
     try {
       const [statsRes, heatmapRes, coverageRes] = await Promise.all([
-        get(`/api/v1/dashboard/stats?district=${district}&state=${state}`),
-        get(`/api/v1/dashboard/heatmap?state=${state}`),
-        get(`/api/v1/dashboard/coverage?district=${district}&state=${state}`),
+        get(`/dashboard/stats?district=${district}&state=${state}`),
+        get(`/dashboard/heatmap?state=${state}`),
+        get(`/dashboard/coverage?district=${district}&state=${state}`),
       ])
       
       setStats(statsRes)
