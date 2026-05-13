@@ -20,7 +20,7 @@ export default function ASHAHome() {
         return
       }
       try {
-        const history = await get(`/screening/history/${ashaId}`)
+        const history = await get(`/api/v1/screening/history/${ashaId}`)
         
         // Calculate this month's stats
         const currentMonth = new Date().getMonth()

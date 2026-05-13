@@ -31,9 +31,9 @@ export default function DoctorDashboard() {
     const activeState = state || 'Karnataka'
     try {
       const [statsRes, referralsRes, sessionsRes] = await Promise.all([
-        get(`/dashboard/stats?district=${district}&state=${activeState}`),
-        get(`/screening/referrals?district=${district}&state=${activeState}`),
-        get(`/screening/sessions?district=${district}&state=${activeState}`),
+        get(`/api/v1/dashboard/stats?district=${district}&state=${activeState}`),
+        get(`/api/v1/screening/referrals?district=${district}&state=${activeState}`),
+        get(`/api/v1/screening/sessions?district=${district}&state=${activeState}`),
       ])
       setStats(statsRes)
       setReferrals(referralsRes)
