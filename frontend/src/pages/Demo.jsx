@@ -104,11 +104,13 @@ export default function Demo() {
   const restart = () => { setStep(0); setIsPlaying(true) }
   
   const skipToNextScenario = () => {
-    if (step < 1) goToStep(1)
-    else if (step < 11) goToStep(11)
-    else if (step < 17) goToStep(17)
-    else if (step < 19) goToStep(19)
-    else goToStep(STAGES.length - 1)
+    let nextStep = STAGES.length - 1
+    if (step < 1) nextStep = 1
+    else if (step < 11) nextStep = 11
+    else if (step < 17) nextStep = 17
+    else if (step < 19) nextStep = 19
+    setStep(nextStep)
+    setFade(true)
   }
 
   const renderContent = () => {
@@ -132,29 +134,29 @@ export default function Demo() {
       case 1: return (
         <div className="flex flex-col items-center justify-center flex-1 p-8 bg-red-900 text-white text-center">
           <ShieldAlert size={64} className="mb-4 text-red-300" />
-          <h2 className="text-3xl font-bold mb-2">Scenario 1</h2>
-          <p className="text-xl text-red-200">High Risk & Linguistic Divergence</p>
+          <h2 className="text-3xl font-bold mb-2">{t('demo.titleCard.s1')}</h2>
+          <p className="text-xl text-red-200">{t('demo.titleCard.s1Desc')}</p>
         </div>
       )
       case 11: return (
         <div className="flex flex-col items-center justify-center flex-1 p-8 bg-green-900 text-white text-center">
           <HeartPulse size={64} className="mb-4 text-green-300" />
-          <h2 className="text-3xl font-bold mb-2">Scenario 2</h2>
-          <p className="text-xl text-green-200">Low Risk & Routine Care</p>
+          <h2 className="text-3xl font-bold mb-2">{t('demo.titleCard.s2')}</h2>
+          <p className="text-xl text-green-200">{t('demo.titleCard.s2Desc')}</p>
         </div>
       )
       case 17: return (
         <div className="flex flex-col items-center justify-center flex-1 p-8 bg-blue-900 text-white text-center">
           <UserCheck size={64} className="mb-4 text-blue-300" />
-          <h2 className="text-3xl font-bold mb-2">Scenario 3</h2>
-          <p className="text-xl text-blue-200">Doctor Referral Workflow</p>
+          <h2 className="text-3xl font-bold mb-2">{t('demo.titleCard.s3')}</h2>
+          <p className="text-xl text-blue-200">{t('demo.titleCard.s3Desc')}</p>
         </div>
       )
       case 19: return (
         <div className="flex flex-col items-center justify-center flex-1 p-8 bg-purple-900 text-white text-center">
           <Activity size={64} className="mb-4 text-purple-300" />
-          <h2 className="text-3xl font-bold mb-2">Scenario 4</h2>
-          <p className="text-xl text-purple-200">District Analytics</p>
+          <h2 className="text-3xl font-bold mb-2">{t('demo.titleCard.s4')}</h2>
+          <p className="text-xl text-purple-200">{t('demo.titleCard.s4Desc')}</p>
         </div>
       )
 
@@ -225,8 +227,8 @@ export default function Demo() {
       // ── Free Speech (7) ──
       case 7: return (
         <div className="flex flex-col flex-1 p-6">
-          <h2 className="text-2xl font-bold text-green-900 mb-2">माँ की आवाज़ (वैकल्पिक)</h2>
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-xl mb-6"><p className="text-green-800 font-medium text-lg leading-snug">माँ से पूछें: 'आप हाल ही में कैसा महसूस कर रही हैं? मुझे अपने अनुभव के बारे में और बताएं।'</p></div>
+          <h2 className="text-2xl font-bold text-green-900 mb-2">{t('screening.freeSpeech.title')}</h2>
+          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-xl mb-6"><p className="text-green-800 font-medium text-lg leading-snug">{t('screening.freeSpeech.desc')}</p></div>
           <div className="flex-1 min-h-[180px] w-full border-2 border-amber-400 rounded-2xl p-4 text-lg bg-amber-50 text-gray-800 leading-relaxed">{typedText}<span className="animate-pulse text-amber-600">|</span></div>
         </div>
       )
@@ -235,8 +237,8 @@ export default function Demo() {
       case 8: return (
         <div className="flex flex-col flex-1 items-center justify-center p-6 bg-green-50">
           <div className="w-24 h-24 bg-white rounded-full shadow-lg flex items-center justify-center mb-6"><Loader2 size={48} className="animate-spin text-green-600" /></div>
-          <h2 className="text-2xl font-bold text-green-900">विश्लेषण हो रहा है...</h2>
-          <p className="text-green-700 mt-2 text-center">AI जवाबों और भाषाई पैटर्न का अध्ययन कर रहा है।</p>
+          <h2 className="text-2xl font-bold text-green-900">{t('demo.processing.title')}</h2>
+          <p className="text-green-700 mt-2 text-center">{t('demo.processing.desc')}</p>
           <div className="mt-6 flex gap-2">{[0,1,2].map(i => <div key={i} className="w-3 h-3 rounded-full bg-green-500 animate-bounce" style={{animationDelay:`${i*150}ms`}} />)}</div>
         </div>
       )
@@ -265,28 +267,17 @@ export default function Demo() {
       case 16: return (
         <div className="flex flex-col flex-1 p-6 gap-6 bg-green-50/50">
           <div className="flex flex-col items-center text-center mt-2">
-            <CheckCircle size={64} className="text-green-600 mb-3" />
-            <h1 className="text-2xl font-bold text-green-800 mb-3">{t('result.risk.low')}</h1>
-            <div className="px-4 py-1.5 rounded-full text-white font-bold text-sm bg-green-600 shadow-sm">{t('result.score')}: 3/30</div>
-          </div>
-          <div className="border-2 rounded-2xl p-5 bg-green-50 border-green-200 text-green-900">
-            <p className="font-bold text-sm mb-2 opacity-80">{t('result.action.title')}</p>
-            <p className="text-lg font-medium leading-relaxed">{t('result.action.low')}</p>
-          </div>
-        </div>
-      )
-
-      // ── SMS (10) ──
+            <CheckCircle size={64} classNa      // ── SMS (10) ──
       case 10: return (
         <div className="flex flex-col flex-1 items-center justify-center p-6 gap-6">
           {smsState === 'sending' ? (<>
             <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center"><Send size={36} className="text-red-600 animate-pulse" /></div>
-            <h2 className="text-xl font-bold text-red-800">PHC को SMS भेजा जा रहा है...</h2>
+            <h2 className="text-xl font-bold text-red-800">{t('demo.sms.sending')}</h2>
             <div className="flex gap-2">{[0,1,2].map(i => <div key={i} className="w-2.5 h-2.5 rounded-full bg-red-400 animate-bounce" style={{animationDelay:`${i*150}ms`}} />)}</div>
           </>) : (<>
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center"><CheckCircle size={48} className="text-green-600" /></div>
-            <h2 className="text-xl font-bold text-green-800">✓ SMS भेजा गया</h2>
-            <p className="text-gray-600 text-center font-medium">Hoskote Town PHC को HIGH RISK अलर्ट भेजा गया।<br/>Session ID: 1a2b3c4d</p>
+            <h2 className="text-xl font-bold text-green-800">{t('demo.sms.sent')}</h2>
+            <p className="text-gray-600 text-center font-medium">{t('demo.sms.desc')}<br/>Session ID: 1a2b3c4d</p>
           </>)}
         </div>
       )
@@ -296,11 +287,11 @@ export default function Demo() {
         <div className="flex flex-col flex-1 bg-gray-50">
           <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
             <div><h1 className="text-lg font-bold text-gray-900">👩‍⚕️ Hoskote Town PHC</h1><p className="text-xs text-gray-500">Doctor Dashboard</p></div>
-            {docState === 'pending' && <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold animate-pulse">1 Pending</span>}
+            {docState === 'pending' && <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold animate-pulse">1 {t('demo.doc.pending')}</span>}
           </div>
           <div className="flex border-b border-gray-200 bg-white">
-            <div className={`flex-1 text-center py-2 text-sm font-bold ${docState === 'pending' ? 'text-green-700 border-b-2 border-green-600' : 'text-gray-500'}`}>Pending (1)</div>
-            <div className={`flex-1 text-center py-2 text-sm font-bold ${docState === 'reviewed' ? 'text-green-700 border-b-2 border-green-600' : 'text-gray-500'}`}>Reviewed</div>
+            <div className={`flex-1 text-center py-2 text-sm font-bold ${docState === 'pending' ? 'text-green-700 border-b-2 border-green-600' : 'text-gray-500'}`}>{t('demo.doc.pending')} (1)</div>
+            <div className={`flex-1 text-center py-2 text-sm font-bold ${docState === 'reviewed' ? 'text-green-700 border-b-2 border-green-600' : 'text-gray-500'}`}>{t('demo.doc.reviewed')}</div>
           </div>
           <div className="p-4 flex flex-col gap-3">
             {docState === 'pending' ? (
@@ -314,7 +305,7 @@ export default function Demo() {
                   <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-semibold">Score: 19</span>
                   <span className="px-2 py-1 bg-amber-100 text-amber-800 border border-amber-300 rounded text-xs font-bold">⚠️ Linguistic</span>
                 </div>
-                <button className="w-full py-2 bg-green-600 text-white rounded-lg text-sm font-bold shadow hover:bg-green-700 transition-colors">Review Case →</button>
+                <button className="w-full py-2 bg-green-600 text-white rounded-lg text-sm font-bold shadow hover:bg-green-700 transition-colors">{t('demo.doc.reviewCase')}</button>
               </div>
             ) : (
               <div className="bg-white rounded-2xl border-l-4 border-green-500 shadow-sm p-4 opacity-80">
@@ -346,9 +337,9 @@ export default function Demo() {
           </div>
           {districtCount === 49 && (
             <div className="mx-4 bg-amber-50 border-2 border-amber-300 rounded-xl p-4 animate-fade-in-up shadow-sm">
-              <p className="text-amber-800 font-bold flex items-center gap-2"><AlertTriangle size={18} /> ⚠️ 1 New Dark Village</p>
+              <p className="text-amber-800 font-bold flex items-center gap-2"><AlertTriangle size={18} /> ⚠️ 1 {t('demo.dist.darkVillage')}</p>
               <p className="text-amber-700 text-sm mt-1 mb-3">KA001 has reached 42% high-risk rate.</p>
-              <button className="w-full bg-amber-600 text-white py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-amber-700">Assign Counselor</button>
+              <button className="w-full bg-amber-600 text-white py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-amber-700">{t('demo.dist.assign')}</button>
             </div>
           )}
         </div>
