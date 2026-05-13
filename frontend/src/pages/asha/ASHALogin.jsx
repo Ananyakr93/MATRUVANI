@@ -14,8 +14,12 @@ import {
 import { useTranslation } from '@/hooks/useTranslation'
 
 const DISTRICTS = [
-  "Bengaluru Urban", "Bengaluru Rural", "Ramanagara", "Tumakuru", 
-  "Mysuru", "Mandya", "Hassan", "Kolar", "Chikkaballapura"
+  "Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", 
+  "Bidar", "Chamarajanagar", "Chikkaballapura", "Chikkamagaluru", "Chitradurga", 
+  "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", 
+  "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", 
+  "Mandya", "Mysuru", "Raichur", "Ramanagara", "Shivamogga", 
+  "Tumakuru", "Udupi", "Uttara Kannada", "Vijayanagara", "Vijayapura", "Yadgir"
 ]
 
 export default function ASHALogin() {
