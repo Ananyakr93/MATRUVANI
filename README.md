@@ -1,7 +1,6 @@
 # 🌸 MATRUVANI (ಮಾತೃವಾಣಿ)
 ### Bridging the Gap in Perinatal Mental Health with AI & Empathy
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![React](https://img.shields.io/badge/Frontend-React%2018-blue.svg)](https://reactjs.org/)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-green.svg)](https://fastapi.tiangolo.com/)
 [![PWA](https://img.shields.io/badge/PWA-Ready-orange.svg)](https://web.dev/progressive-web-apps/)
@@ -106,11 +105,11 @@ Mental health is deeply cultural. MATRUVANI supports:
 
 ---
 
-## 🌟 Why MATRUVANI Wins
+## 🌟 Why MATRUVANI
 - **Scalable**: Built on lightweight, modern tech.
 - **Localized**: Breaks script and dialect barriers.
 - **Impactful**: Addresses a massive, overlooked public health crisis.
 - **Ready**: PWA deployment means it's an app on any phone in seconds.
 
 ---
-*Created for the [Hackathon Name] 2026. Empowering mothers, one conversation at a time.*
+*Created for the WitchHunt AI Hackathon 2026 | AI4India | HopeWorks Foundation. Empowering mothers, one conversation at a time.*
