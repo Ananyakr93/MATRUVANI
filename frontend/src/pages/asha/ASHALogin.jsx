@@ -56,11 +56,11 @@ export default function ASHALogin() {
         })
         navigate('/asha/home', { replace: true })
       } catch (err) {
-        // If 404, prompt to register
-        if (err.message.includes("404")) {
+        // If 404 or Not Found, prompt to register
+        if (err.message.includes("404") || err.message.toLowerCase().includes("not found")) {
           setIsNewUser(true)
         } else {
-          setError(err.message || t('asha.login.error.loginFail'))
+          setError(t('asha.login.error.loginFail'))
         }
       }
     } catch (err) {
@@ -128,15 +128,15 @@ export default function ASHALogin() {
 
       {/* ── Hackathon Demo Shortcut ─────────────────────────────────────── */}
       <div className="mx-6 mt-5 mb-1 p-4 bg-amber-50 border-2 border-amber-300 rounded-2xl flex flex-col gap-2">
-        <p className="text-xs font-bold text-amber-700 uppercase tracking-wide">⚡ Hackathon Demo Mode</p>
+        <p className="text-xs font-bold text-amber-700 uppercase tracking-wide">{t('asha.login.demo.title')}</p>
         <p className="text-sm text-amber-800 font-medium">
-          Skip login and explore the full ASHA workflow instantly.
+          {t('asha.login.demo.desc')}
         </p>
         <button
           onClick={handleDemoLogin}
           className="w-full h-12 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-base flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm"
         >
-          🎯 Try Demo — Skip Login
+          {t('asha.login.demo.btn')}
         </button>
       </div>
 

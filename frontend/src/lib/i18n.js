@@ -24,6 +24,9 @@ export const translations = {
     "asha.login.error.loginFail": "Login failed. Please try again.",
     "asha.login.error.registerFail": "Registration failed.",
     "asha.login.error.selectFields": "Please select a district and sub-centre to register.",
+    "asha.login.demo.title": "⚡ Hackathon Demo Mode",
+    "asha.login.demo.desc": "Skip login and explore the full ASHA workflow instantly.",
+    "asha.login.demo.btn": "🎯 Try Demo — Skip Login",
 
     "asha.home.online": "Online",
     "asha.home.offline": "Offline",
@@ -176,6 +179,9 @@ export const translations = {
     "asha.login.error.loginFail": "लॉगिन विफल रहा। कृपया फिर से प्रयास करें।",
     "asha.login.error.registerFail": "रजिस्ट्रेशन विफल रहा।",
     "asha.login.error.selectFields": "रजिस्टर करने के लिए कृपया जिला और उप-केंद्र (Sub-centre) चुनें।",
+    "asha.login.demo.title": "⚡ हैकथॉन डेमो मोड",
+    "asha.login.demo.desc": "लॉगिन छोड़ें और ASHA वर्कफ़्लो का तुरंत अनुभव करें।",
+    "asha.login.demo.btn": "🎯 डेमो देखें — लॉगिन छोड़ें",
 
     "asha.home.online": "ऑनलाइन",
     "asha.home.offline": "ऑफ़लाइन",
@@ -328,6 +334,9 @@ export const translations = {
     "asha.login.error.loginFail": "ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
     "asha.login.error.registerFail": "ನೋಂದಣಿ ವಿಫಲವಾಗಿದೆ.",
     "asha.login.error.selectFields": "ನೋಂದಾಯಿಸಲು ದಯವಿಟ್ಟು ಜಿಲ್ಲೆ ಮತ್ತು ಉಪ-ಕೇಂದ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+    "asha.login.demo.title": "⚡ ಹ್ಯಾಕಥಾನ್ ಡೆಮೊ ಮೋಡ್",
+    "asha.login.demo.desc": "ಲಾಗಿನ್ ಬಿಟ್ಟು ನೇರವಾಗಿ ಆಶಾ ವರ್ಕ್‌ಫ್ಲೋ ಅನುಭವಿಸಿ.",
+    "asha.login.demo.btn": "🎯 ಡೆಮೊ ಪ್ರಯತ್ನಿಸಿ — ಲಾಗಿನ್ ಬಿಡಿ",
 
     "asha.home.online": "ಆನ್‌ಲೈನ್",
     "asha.home.offline": "ಆಫ್‌ಲೈನ್",
