@@ -51,7 +51,7 @@ export default function ASHALogin() {
       
       try {
         // Attempt login
-        const res = await post('/asha/login', { phone_hash })
+        const res = await post('/api/v1/asha/login', { phone_hash })
         setAsha({
           ashaId: res.asha_id,
           district: res.district,
@@ -84,7 +84,7 @@ export default function ASHALogin() {
     setError(null)
     try {
       const phone_hash = await sha256(phone)
-      const res = await post('/asha/register', {
+      const res = await post('/api/v1/asha/register', {
         phone_hash,
         district,
         sub_centre: subCentre,

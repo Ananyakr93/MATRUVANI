@@ -56,12 +56,12 @@ export default function ScreeningFlow() {
         risk_level: localResult.risk_level,
         divergence_flag: 'GREEN',
         ams_score: 0.0,
-        asha_script: {},
+        asha_script: null,
         matched_phrases: [],
         isOffline: true,
       }
       clearDraft()
-      navigate('/asha/result', { state: { result: fakeResponse, motherData } })
+      navigate('/asha/result', { state: { result: fakeResponse, motherData, answers, transcript } })
     }
 
     const process = async () => {
@@ -70,9 +70,9 @@ export default function ScreeningFlow() {
 
       if (isOnline) {
         try {
-          const res = await post('/screening/analyze', { answers, transcript, language })
+          const res = await post('/api/v1/screening/analyze', { answers, transcript, language })
           clearDraft()
-          navigate('/asha/result', { state: { result: res, motherData } })
+          navigate('/asha/result', { state: { result: res, motherData, answers, transcript } })
         } catch (e) {
           console.error(e)
           handleOfflineFallback()

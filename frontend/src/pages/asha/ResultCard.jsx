@@ -47,7 +47,7 @@ export default function ResultCard() {
 
       if (isOnline && !result.isOffline) {
         try {
-          const res = await post('/screening/session', payload)
+          const res = await post('/api/v1/screening/session', payload)
           setSessionRecord(res)
           setSaveStatus("✓") // Or a translated saved string if available
           toast.success("✓")
@@ -84,7 +84,7 @@ export default function ResultCard() {
     }
     setSmsStatus("loading")
     try {
-      await post('/sms/send-referral', {
+      await post('/api/v1/sms/send-referral', {
         session_id: sessionRecord.id,
         phc_phone: phcData.phone,
         phc_name: phcData.name,
