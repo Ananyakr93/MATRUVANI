@@ -4,11 +4,7 @@ import { ChevronLeft } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useTranslation } from '@/hooks/useTranslation'
-
-const DISTRICTS = [
-  "Bengaluru Urban", "Bengaluru Rural", "Ramanagara", "Tumakuru", 
-  "Mysuru", "Mandya", "Hassan", "Kolar", "Chikkaballapura"
-]
+import { KARNATAKA_DISTRICTS, getDistrictLabel } from '@/lib/districts'
 
 const PHC_LIST = {
   "Bengaluru Rural": ["Hoskote Town PHC", "Devanahalli PHC", "Nelamangala PHC", "Doddaballapura PHC"],
@@ -19,7 +15,7 @@ const PHC_LIST = {
 export default function DoctorLogin() {
   const navigate = useNavigate()
   const { setDoctor } = useAppStore()
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   
   const [district, setDistrict] = useState('')
   const [phcName, setPhcName] = useState('')
@@ -28,7 +24,7 @@ export default function DoctorLogin() {
 
   const handleLogin = () => {
     if (!district || !phcName) return
-    setDoctor({ district, phcName, state: "Karnataka" })
+    setDoctor({ district, phcName, stateName: "Karnataka" })
     navigate('/doctor/dashboard')
   }
 
@@ -56,8 +52,8 @@ export default function DoctorLogin() {
                 <SelectValue placeholder={t('asha.login.districtPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                {DISTRICTS.map(d => (
-                  <SelectItem key={d} value={d} className="text-lg">{d}</SelectItem>
+                {KARNATAKA_DISTRICTS.map(d => (
+                  <SelectItem key={d} value={d} className="text-lg">{getDistrictLabel(d, language)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

@@ -14,7 +14,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3}'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/api\.matruvani\.local/,
+            urlPattern: /^http:\/\/localhost:8001\/api\/v1/,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',

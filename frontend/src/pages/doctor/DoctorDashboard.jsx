@@ -11,16 +11,16 @@ import { useTranslation } from '@/hooks/useTranslation'
 
 export default function DoctorDashboard() {
   const navigate = useNavigate()
-  const { district, phcName, clearSession } = useAppStore()
+  const { district, phcName, stateName, clearSession } = useAppStore()
   const { t } = useTranslation()
 
   const [isLoading, setIsLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [stats, setStats] = useState(null)
   
-  // Mock data for referrals and table since API logic for full session details isn't fully implemented
   const [referrals, setReferrals] = useState([])
   const [allSessions, setAllSessions] = useState([])
+  const [followedUpIds, setFollowedUpIds] = useState(new Set())
 
   // Filters for Table
   const [riskFilter, setRiskFilter] = useState('ALL')
@@ -28,24 +28,16 @@ export default function DoctorDashboard() {
 
   const fetchData = async () => {
     setIsLoading(true)
+    const activeState = stateName || 'Karnataka'
     try {
-      const statsRes = await get(`/dashboard/stats?district=${district}&state=Karnataka`)
+      const [statsRes, referralsRes, sessionsRes] = await Promise.all([
+        get(`/dashboard/stats?district=${district}&state=${activeState}`),
+        get(`/screening/referrals?district=${district}&state=${activeState}`),
+        get(`/screening/sessions?district=${district}&state=${activeState}`),
+      ])
       setStats(statsRes)
-      
-      // MOCK DATA for Hackathon demo since we don't have a GET /sessions list endpoint
-      const today = new Date().toISOString().split('T')[0]
-      setReferrals([
-        { id: "1a2b3c4d", village_code: "VIL001", risk_level: "HIGH", epds_score: 18, days_postpartum: 14, divergence_flag: "RED", sub_centre: "Hoskote", time: "10:30 AM", followedUp: false },
-        { id: "5e6f7g8h", village_code: "VIL004", risk_level: "MODERATE", epds_score: 12, gestational_week: 24, divergence_flag: "YELLOW", sub_centre: "Hoskote", time: "11:15 AM", followedUp: false }
-      ])
-      
-      setAllSessions([
-        { date: today, village_code: "VIL001", risk_level: "HIGH", epds_score: 18, divergence_flag: "RED", sub_centre: "Hoskote" },
-        { date: today, village_code: "VIL002", risk_level: "LOW", epds_score: 4, divergence_flag: "GREEN", sub_centre: "Hoskote" },
-        { date: "2026-05-12", village_code: "VIL004", risk_level: "MODERATE", epds_score: 12, divergence_flag: "YELLOW", sub_centre: "Hoskote" },
-        { date: "2026-05-11", village_code: "VIL005", risk_level: "LOW", epds_score: 7, divergence_flag: "GREEN", sub_centre: "Devanahalli" }
-      ])
-
+      setReferrals(referralsRes)
+      setAllSessions(sessionsRes)
       setLastUpdated(new Date())
     } catch (err) {
       console.error(err)
@@ -64,7 +56,12 @@ export default function DoctorDashboard() {
   }
 
   const toggleFollowUp = (id) => {
-    setReferrals(refs => refs.map(r => r.id === id ? { ...r, followedUp: !r.followedUp } : r))
+    setFollowedUpIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
   }
 
   const downloadCSV = () => {
@@ -133,7 +130,7 @@ export default function DoctorDashboard() {
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
                 {referrals.map(ref => (
-                  <div key={ref.id} className={`bg-white rounded-2xl border-l-4 shadow-sm p-5 transition-all ${ref.risk_level === 'HIGH' ? 'border-red-500' : 'border-amber-500'} ${ref.followedUp ? 'opacity-60' : ''}`}>
+                  <div key={String(ref.session_id)} className={`bg-white rounded-2xl border-l-4 shadow-sm p-5 transition-all ${ref.risk_level === 'HIGH' ? 'border-red-500' : 'border-amber-500'} ${followedUpIds.has(String(ref.session_id)) ? 'opacity-60' : ''}`}>
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-2">
                         {ref.risk_level === 'HIGH' ? <AlertOctagon size={24} className="text-red-600" /> : <AlertTriangle size={24} className="text-amber-500" />}
@@ -141,7 +138,7 @@ export default function DoctorDashboard() {
                           {ref.risk_level}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-400 font-mono">ID: {ref.id}</span>
+                      <span className="text-xs text-gray-400 font-mono">ID: {String(ref.session_id).slice(0, 8)}</span>
                     </div>
 
                     <h3 className="text-xl font-bold text-gray-900 mb-2">Village: {ref.village_code}</h3>
@@ -158,15 +155,15 @@ export default function DoctorDashboard() {
                     </div>
 
                     <div className="text-sm text-gray-500 font-medium mb-5">
-                      Sub-centre: {ref.sub_centre} • {ref.time}
+                      Sub-centre: {ref.sub_centre} • {ref.session_time || 'N/A'}
                     </div>
 
                     <div className="flex gap-3">
                       <button 
-                        onClick={() => toggleFollowUp(ref.id)}
-                        className={`flex-1 h-12 rounded-xl font-bold transition-colors ${ref.followedUp ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+                        onClick={() => toggleFollowUp(String(ref.session_id))}
+                        className={`flex-1 h-12 rounded-xl font-bold transition-colors ${followedUpIds.has(String(ref.session_id)) ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
                       >
-                        {ref.followedUp ? '✅ Follow-up Started' : 'Start Follow-up'}
+                        {followedUpIds.has(String(ref.session_id)) ? '✅ Follow-up Started' : 'Start Follow-up'}
                       </button>
                       <button className="flex-1 h-12 bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50 rounded-xl font-bold">
                         📋 Full EPDS
@@ -218,8 +215,8 @@ export default function DoctorDashboard() {
                 </TableHeader>
                 <TableBody>
                   {filteredSessions.map((s, i) => (
-                    <TableRow key={i}>
-                      <TableCell className="font-medium text-gray-900">{s.date}</TableCell>
+                    <TableRow key={s.session_id || i}>
+                      <TableCell className="font-medium text-gray-900">{s.session_date}</TableCell>
                       <TableCell className="font-mono text-gray-600">{s.village_code}</TableCell>
                       <TableCell>
                         <span className={`px-2 py-1 rounded text-xs font-bold ${s.risk_level === 'HIGH' ? 'bg-red-100 text-red-800' : s.risk_level === 'MODERATE' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800'}`}>

@@ -124,3 +124,67 @@ def get_heatmap(state: str, db: Session = Depends(get_session)):
     # Sort descending by risk_rate
     heatmap.sort(key=lambda x: x.risk_rate, reverse=True)
     return heatmap
+
+
+# ── ASHA Coverage per Sub-centre ──────────────────────────────────────────────
+
+from datetime import date
+from calendar import monthrange
+from backend.models import ASHAWorker
+from backend.schemas import SubCentreCoverage
+
+
+@router.get("/coverage", response_model=List[SubCentreCoverage])
+def get_coverage(district: str, state: str, db: Session = Depends(get_session)):
+    """
+    Per sub-centre ASHA coverage for the District dashboard table.
+    Returns ASHA count, sessions this month, high-risk count, and coverage rate.
+    Coverage rate = sessions_this_month / (asha_count * 4), capped at 1.0.
+    """
+    today = date.today()
+    _, last_day = monthrange(today.year, today.month)
+    month_start = date(today.year, today.month, 1)
+    month_end = date(today.year, today.month, last_day)
+
+    # Fetch all active ASHAs in this district/state
+    asha_stmt = (
+        select(ASHAWorker)
+        .where(ASHAWorker.district == district)
+        .where(ASHAWorker.state == state)
+        .where(ASHAWorker.is_active == True)
+    )
+    ashas = db.exec(asha_stmt).all()
+
+    # Group ASHA IDs by sub_centre
+    sub_centre_map: Dict[str, List] = defaultdict(list)
+    for asha in ashas:
+        sub_centre_map[asha.sub_centre].append(asha.id)
+
+    results = []
+    for sub_centre, asha_ids in sub_centre_map.items():
+        # Fetch sessions this month for these ASHAs
+        sess_stmt = (
+            select(ScreeningSession)
+            .where(ScreeningSession.asha_id.in_(asha_ids))
+            .where(ScreeningSession.session_date >= month_start)
+            .where(ScreeningSession.session_date <= month_end)
+        )
+        sessions = db.exec(sess_stmt).all()
+
+        asha_count = len(asha_ids)
+        sessions_this_month = len(sessions)
+        high_risk_count = sum(1 for s in sessions if s.risk_level == "HIGH")
+        coverage_rate = (
+            min(sessions_this_month / (asha_count * 4), 1.0) if asha_count > 0 else 0.0
+        )
+
+        results.append(SubCentreCoverage(
+            sub_centre=sub_centre,
+            asha_count=asha_count,
+            sessions_this_month=sessions_this_month,
+            high_risk_count=high_risk_count,
+            coverage_rate=coverage_rate,
+        ))
+
+    results.sort(key=lambda x: x.coverage_rate, reverse=True)
+    return results

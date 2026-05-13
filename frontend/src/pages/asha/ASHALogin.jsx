@@ -12,16 +12,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useTranslation } from '@/hooks/useTranslation'
+import { KARNATAKA_DISTRICTS, getDistrictLabel } from '@/lib/districts'
 
-const DISTRICTS = [
-  "Bengaluru Urban", "Bengaluru Rural", "Ramanagara", "Tumakuru", 
-  "Mysuru", "Mandya", "Hassan", "Kolar", "Chikkaballapura"
-]
+
 
 export default function ASHALogin() {
   const navigate = useNavigate()
   const { setAsha } = useAppStore()
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   
   const [phone, setPhone] = useState('')
   const [district, setDistrict] = useState('')
@@ -51,16 +49,16 @@ export default function ASHALogin() {
         setAsha({
           ashaId: res.asha_id,
           district: res.district,
-          state: res.state,
+          stateName: res.state,
           sub_centre: res.sub_centre
         })
         navigate('/asha/home', { replace: true })
       } catch (err) {
-        // If 404, prompt to register
-        if (err.message.includes("404")) {
+        // If 404 or Not Found, prompt to register
+        if (err.message.includes("404") || err.message.toLowerCase().includes("not found")) {
           setIsNewUser(true)
         } else {
-          setError(err.message || t('asha.login.error.loginFail'))
+          setError(t('asha.login.error.loginFail'))
         }
       }
     } catch (err) {
@@ -102,11 +100,21 @@ export default function ASHALogin() {
     }
   }
 
+  const handleDemoLogin = () => {
+    setAsha({
+      ashaId: 'demo-asha-0000-0000-000000000001',
+      district: 'Bengaluru Rural',
+      state: 'Karnataka',
+      sub_centre: 'Hoskote Town',
+    })
+    navigate('/asha/home', { replace: true })
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col max-w-md mx-auto relative">
       {/* Header */}
       <div className="flex items-center p-4 border-b border-green-100 bg-green-50">
-        <button 
+        <button
           onClick={() => navigate('/')}
           className="p-2 -ml-2 rounded-full hover:bg-green-200/50 text-green-800"
           aria-label="Back"
@@ -114,6 +122,20 @@ export default function ASHALogin() {
           <ChevronLeft size={28} />
         </button>
         <h1 className="text-xl font-bold text-green-900 ml-2">{t('asha.login.title')}</h1>
+      </div>
+
+      {/* ── Hackathon Demo Shortcut ─────────────────────────────────────── */}
+      <div className="mx-6 mt-5 mb-1 p-4 bg-amber-50 border-2 border-amber-300 rounded-2xl flex flex-col gap-2">
+        <p className="text-xs font-bold text-amber-700 uppercase tracking-wide">{t('asha.login.demo.title')}</p>
+        <p className="text-sm text-amber-800 font-medium">
+          {t('asha.login.demo.desc')}
+        </p>
+        <button
+          onClick={handleDemoLogin}
+          className="w-full h-12 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-base flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm"
+        >
+          {t('asha.login.demo.btn')}
+        </button>
       </div>
 
       {/* Form Area */}
@@ -150,8 +172,8 @@ export default function ASHALogin() {
                   <SelectValue placeholder={t('asha.login.districtPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {DISTRICTS.map(d => (
-                    <SelectItem key={d} value={d} className="text-lg">{d}</SelectItem>
+                  {KARNATAKA_DISTRICTS.map(d => (
+                    <SelectItem key={d} value={d} className="text-lg">{getDistrictLabel(d, language)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

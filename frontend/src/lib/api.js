@@ -2,10 +2,10 @@
  * MATRUVANI — API Client
  *
  * Fetch wrapper with offline detection.
- * Base URL comes from VITE_API_URL env var, defaults to http://localhost:8000.
+ * Base URL comes from VITE_API_URL env var, defaults to http://localhost:8001.
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8001') + '/api/v1'
 
 export class OfflineError extends Error {
   constructor() {

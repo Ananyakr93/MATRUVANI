@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { CheckCircle, AlertTriangle, AlertOctagon, Loader2, Send, FileText } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
@@ -6,12 +6,14 @@ import { post } from '@/lib/api'
 import { generateReferral } from '@/lib/generateReferral'
 import { toast } from 'sonner'
 import { useTranslation } from '@/hooks/useTranslation'
+import { EPDS_QUESTIONS } from '@/lib/epds'
 
 export default function ResultCard() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { ashaId, isOnline, language } = useAppStore()
+  const { ashaId, district, stateName, isOnline, language } = useAppStore()
   const { t } = useTranslation()
+  const saveInitiated = useRef(false)
 
   const stateData = location.state || {}
   const { result, motherData } = stateData
@@ -27,14 +29,35 @@ export default function ResultCard() {
   const [saveStatus, setSaveStatus] = useState(t('screening.saving')) 
   const [isConfirmed, setIsConfirmed] = useState(false)
   const [smsStatus, setSmsStatus] = useState("idle") // idle, loading, success, error
+  const [showBreakdown, setShowBreakdown] = useState(false)
 
   // Auto-save on mount
   useEffect(() => {
-    if (!result || sessionRecord) return
+    if (!result || sessionRecord || saveInitiated.current) return
+    saveInitiated.current = true
 
     const saveSession = async () => {
+      let motherId = "00000000-0000-0000-0000-000000000000"
+
+      if (isOnline && !result.isOffline && motherData) {
+        try {
+          const motherRes = await post('/screening/mother', {
+            asha_id: ashaId,
+            village_code: motherData.villageCode || 'UNKNOWN',
+            gestational_week: motherData.gestationalWeek ? parseInt(motherData.gestationalWeek) : null,
+            days_postpartum: motherData.daysPostpartum ? parseInt(motherData.daysPostpartum) : null,
+            district: district || 'Unknown',
+            state: stateName || 'Karnataka',
+            preferred_language: language || 'hi',
+          })
+          motherId = motherRes.mother_id
+        } catch (err) {
+          console.warn('Mother record creation failed, using placeholder UUID', err)
+        }
+      }
+
       const payload = {
-        mother_id: "00000000-0000-0000-0000-000000000000", // placeholder mother UUID for hackathon
+        mother_id: motherId,
         asha_id: ashaId,
         epds_score: result.epds_score,
         epds_answers: stateData.answers || Array(10).fill(0),
@@ -49,7 +72,7 @@ export default function ResultCard() {
         try {
           const res = await post('/screening/session', payload)
           setSessionRecord(res)
-          setSaveStatus("✓") // Or a translated saved string if available
+          setSaveStatus("✓")
           toast.success("✓")
         } catch (err) {
           console.error("Failed to save session", err)
@@ -198,7 +221,7 @@ export default function ResultCard() {
         <div className={`border-2 rounded-2xl p-5 ${cardBg}`}>
           <p className="font-bold text-sm mb-2 opacity-80">{t('result.action.title')}</p>
           <p className="text-lg font-medium leading-relaxed">
-            {asha_script || (risk_level === 'LOW' ? t('result.action.low') : risk_level === 'MODERATE' ? t('result.action.moderate') : t('result.action.high'))}
+            {asha_script?.message || (risk_level === 'LOW' ? t('result.action.low') : risk_level === 'MODERATE' ? t('result.action.moderate') : t('result.action.high'))}
           </p>
         </div>
 
@@ -209,6 +232,41 @@ export default function ResultCard() {
               <p className="font-bold text-gray-800 mb-1">PHC जानकारी ({phcData.name}):</p>
               <p className="text-gray-600 font-medium">{phcData.phone}</p>
               {risk_level === 'HIGH' && <p className="text-gray-600 text-sm mt-1">{phcData.address}</p>}
+            </div>
+            
+            {/* Detailed Breakdown - Clinical transparency */}
+            <div className="bg-white border-2 border-gray-100 rounded-xl overflow-hidden shadow-sm">
+              <button 
+                onClick={() => setShowBreakdown(!showBreakdown)}
+                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-2 text-gray-700 font-bold">
+                  <FileText size={20} className="text-green-600" />
+                  <span>{t('result.breakdown.title') || 'Detailed Score Breakdown'}</span>
+                </div>
+                <span className={`transform transition-transform ${showBreakdown ? 'rotate-180' : ''}`}>▼</span>
+              </button>
+              
+              {showBreakdown && (
+                <div className="px-4 pb-4 flex flex-col gap-3 animate-fade-in">
+                  {stateData.answers.map((ans, idx) => {
+                    const q_num = idx + 1
+                    const q_data = EPDS_QUESTIONS[q_num]
+                    const q_score = q_data.scoring === 'reverse' ? (3 - ans) : ans
+                    return (
+                      <div key={idx} className="flex items-start justify-between gap-3 text-sm border-b border-gray-50 pb-2">
+                        <div className="flex-1">
+                          <p className="text-gray-500 font-semibold text-[10px] uppercase mb-0.5">Q{q_num}</p>
+                          <p className="text-gray-700 leading-tight line-clamp-2">{q_data[language] || q_data.hi}</p>
+                        </div>
+                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${q_score > 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                          +{q_score}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
 
             <button 

@@ -4,24 +4,19 @@ import { ChevronLeft } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useTranslation } from '@/hooks/useTranslation'
-
-const STATES = ["Karnataka"] // Hackathon scope
-const DISTRICTS = [
-  "Bengaluru Urban", "Bengaluru Rural", "Ramanagara", "Tumakuru", 
-  "Mysuru", "Mandya", "Hassan", "Kolar", "Chikkaballapura"
-]
+import { KARNATAKA_DISTRICTS, getDistrictLabel } from '@/lib/districts'
 
 export default function DistrictLogin() {
   const navigate = useNavigate()
   const { setDistrictRole } = useAppStore()
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   
-  const [state, setState] = useState("Karnataka")
+  const [stateVal, setStateVal] = useState("Karnataka")
   const [district, setDistrict] = useState('')
 
   const handleLogin = () => {
-    if (!state || !district) return
-    setDistrictRole({ state, district })
+    if (!stateVal || !district) return
+    setDistrictRole({ stateName: stateVal, district })
     navigate('/district/dashboard')
   }
 
@@ -43,7 +38,7 @@ export default function DistrictLogin() {
           
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-gray-700">{t('district.login.stateLabel')}</label>
-            <Select value={state} onValueChange={setState}>
+            <Select value={stateVal} onValueChange={setStateVal}>
               <SelectTrigger className="w-full h-14 rounded-xl border-2 border-gray-200 text-lg">
                 <SelectValue placeholder={t('district.login.statePlaceholder')} />
               </SelectTrigger>
@@ -62,8 +57,8 @@ export default function DistrictLogin() {
                 <SelectValue placeholder={t('asha.login.districtPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                {DISTRICTS.map(d => (
-                  <SelectItem key={d} value={d} className="text-lg">{d}</SelectItem>
+                {KARNATAKA_DISTRICTS.map(d => (
+                  <SelectItem key={d} value={d} className="text-lg">{getDistrictLabel(d, language)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

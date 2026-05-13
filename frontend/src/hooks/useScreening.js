@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 
-const DRAFT_KEY = 'matruvani-screening-draft'
+import { useAppStore } from '@/store/useAppStore'
 
 export function useScreening() {
+  const { ashaId } = useAppStore()
+  const DRAFT_KEY = `matruvani-screening-${ashaId}-draft`
+  
   const [state, setState] = useState(() => {
     try {
       const draft = localStorage.getItem(DRAFT_KEY)
@@ -28,8 +31,10 @@ export function useScreening() {
 
   // Auto-save on state change
   useEffect(() => {
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(state))
-  }, [state])
+    if (ashaId) {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(state))
+    }
+  }, [state, ashaId, DRAFT_KEY])
 
   const setStep = (step) => setState(s => ({ ...s, step }))
   
