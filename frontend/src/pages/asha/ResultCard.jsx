@@ -198,7 +198,7 @@ export default function ResultCard() {
         <div className={`border-2 rounded-2xl p-5 ${cardBg}`}>
           <p className="font-bold text-sm mb-2 opacity-80">{t('result.action.title')}</p>
           <p className="text-lg font-medium leading-relaxed">
-            {asha_script || (risk_level === 'LOW' ? t('result.action.low') : risk_level === 'MODERATE' ? t('result.action.moderate') : t('result.action.high'))}
+            {asha_script?.message || (risk_level === 'LOW' ? t('result.action.low') : risk_level === 'MODERATE' ? t('result.action.moderate') : t('result.action.high'))}
           </p>
         </div>
 
