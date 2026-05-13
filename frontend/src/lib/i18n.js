@@ -1,6 +1,8 @@
 export const translations = {
   en: {
     "app.title": "MATRUVANI",
+    "app.tagline": "Voice-Guided Perinatal Mental Health Screening for ASHA Workers",
+    "welcome.tagline1": "One screen. Four minutes. Every mother counts.",
     "role.asha": "ASHA Worker",
     "role.doctor": "Doctor / PHC",
     "role.district": "District Official",
@@ -143,6 +145,8 @@ export const translations = {
   },
   hi: {
     "app.title": "MATRUVANI",
+    "app.tagline": "ASHA कार्यकर्ताओं के लिए आवाज़-नियंत्रित प्रसव मानसिक स्वास्थ्य जाँच",
+    "welcome.tagline1": "एक जाँच। चार मिनट। हर माँ मायने रखती है।",
     "role.asha": "ASHA वर्कर",
     "role.doctor": "डॉक्टर / PHC",
     "role.district": "जिला अधिकारी",
@@ -285,6 +289,8 @@ export const translations = {
   },
   kn: {
     "app.title": "MATRUVANI",
+    "app.tagline": "ಆಶಾ ಕಾರ್ಯಕರ್ತರಿಗೆ ಧ್ವನಿ-ಮಾರ್ಗದರ್ಶಿ ಪ್ರಸವ ಮಾನಸಿಕ ಆರೋಗ್ಯ ತಪಾಸಣೆ",
+    "welcome.tagline1": "ಒಂದು ತಪಾಸಣೆ. ನಾಲ್ಕು ನಿಮಿಷ. ಪ್ರತಿ ತಾಯಿ ಮುಖ್ಯ.",
     "role.asha": "ಆಶಾ ಕಾರ್ಯಕರ್ತೆ",
     "role.doctor": "ವೈದ್ಯರು / PHC",
     "role.district": "ಜಿಲ್ಲಾ ಅಧಿಕಾರಿ",

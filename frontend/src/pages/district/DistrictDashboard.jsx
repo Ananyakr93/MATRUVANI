@@ -26,20 +26,22 @@ export default function DistrictDashboard() {
   const fetchData = async () => {
     setIsLoading(true)
     try {
-      const [statsRes, heatmapRes] = await Promise.all([
+      const [statsRes, heatmapRes, coverageRes] = await Promise.all([
         get(`/dashboard/stats?district=${district}&state=${state}`),
-        get(`/dashboard/heatmap?state=${state}`)
+        get(`/dashboard/heatmap?state=${state}`),
+        get(`/dashboard/coverage?district=${district}&state=${state}`),
       ])
       
       setStats(statsRes)
       setHeatmap(heatmapRes)
-      
-      // Mock ASHA Coverage Data
-      setCoverageData([
-        { sub_centre: "Hoskote Town", asha_count: 12, sessions: 145, high_risk: 22, coverage_rate: "85%" },
-        { sub_centre: "Devanahalli", asha_count: 8, sessions: 90, high_risk: 10, coverage_rate: "92%" },
-        { sub_centre: "Nelamangala", asha_count: 15, sessions: 110, high_risk: 18, coverage_rate: "70%" }
-      ])
+      // Map SubCentreCoverage API fields to the shape the table expects
+      setCoverageData(coverageRes.map(row => ({
+        sub_centre: row.sub_centre,
+        asha_count: row.asha_count,
+        sessions: row.sessions_this_month,
+        high_risk: row.high_risk_count,
+        coverage_rate: `${(row.coverage_rate * 100).toFixed(1)}%`,
+      })))
       
       setLastUpdated(new Date())
     } catch (err) {

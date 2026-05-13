@@ -53,6 +53,44 @@ class ScreeningHistoryItem(BaseModel):
     village_code: str
     epds_score: int
 
+
+class SessionListItem(BaseModel):
+    """Flat session row for the Doctor dashboard table."""
+    session_id: uuid.UUID
+    session_date: date
+    risk_level: str
+    divergence_flag: str
+    ams_score: Optional[float]
+    epds_score: int
+    village_code: str
+    sub_centre: str
+    district: str
+    sms_sent: bool
+
+
+class ReferralItem(BaseModel):
+    """High/Moderate risk session card for doctor referral queue."""
+    session_id: uuid.UUID
+    session_date: date
+    risk_level: str
+    divergence_flag: str
+    epds_score: int
+    village_code: str
+    sub_centre: str
+    days_postpartum: Optional[int]
+    gestational_week: Optional[int]
+    sms_sent: bool
+    session_time: Optional[str] = None  # formatted from created_at e.g. "10:30 AM"
+
+
+class SubCentreCoverage(BaseModel):
+    """Aggregated ASHA coverage row per sub-centre."""
+    sub_centre: str
+    asha_count: int
+    sessions_this_month: int
+    high_risk_count: int
+    coverage_rate: float  # fraction 0-1, multiply by 100 for %
+
 class DashboardStats(BaseModel):
     total_screened: int
     high_risk_count: int

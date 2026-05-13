@@ -102,11 +102,21 @@ export default function ASHALogin() {
     }
   }
 
+  const handleDemoLogin = () => {
+    setAsha({
+      ashaId: 'demo-asha-0000-0000-000000000001',
+      district: 'Bengaluru Rural',
+      state: 'Karnataka',
+      sub_centre: 'Hoskote Town',
+    })
+    navigate('/asha/home', { replace: true })
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col max-w-md mx-auto relative">
       {/* Header */}
       <div className="flex items-center p-4 border-b border-green-100 bg-green-50">
-        <button 
+        <button
           onClick={() => navigate('/')}
           className="p-2 -ml-2 rounded-full hover:bg-green-200/50 text-green-800"
           aria-label="Back"
@@ -114,6 +124,20 @@ export default function ASHALogin() {
           <ChevronLeft size={28} />
         </button>
         <h1 className="text-xl font-bold text-green-900 ml-2">{t('asha.login.title')}</h1>
+      </div>
+
+      {/* ── Hackathon Demo Shortcut ─────────────────────────────────────── */}
+      <div className="mx-6 mt-5 mb-1 p-4 bg-amber-50 border-2 border-amber-300 rounded-2xl flex flex-col gap-2">
+        <p className="text-xs font-bold text-amber-700 uppercase tracking-wide">⚡ Hackathon Demo Mode</p>
+        <p className="text-sm text-amber-800 font-medium">
+          Skip login and explore the full ASHA workflow instantly.
+        </p>
+        <button
+          onClick={handleDemoLogin}
+          className="w-full h-12 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-base flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm"
+        >
+          🎯 Try Demo — Skip Login
+        </button>
       </div>
 
       {/* Form Area */}

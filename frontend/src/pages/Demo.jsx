@@ -229,15 +229,15 @@ export default function Demo() {
             <h1 className="text-lg font-bold text-gray-900">📊 {t('district.login.title')}: Bengaluru Rural</h1>
           </div>
           <div className="p-4 grid grid-cols-2 gap-3">
-            <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100"><p className="text-xs text-gray-500 font-bold mb-1">{t('district.dashboard.screenings')}</p><p className="text-3xl font-bold text-gray-900 transition-all duration-500">{districtCount}</p></div>
-            <div className="bg-white rounded-xl shadow-sm p-4 border border-red-200 bg-red-50/30"><p className="text-xs text-gray-500 font-bold mb-1">{t('district.dashboard.highRisk')}</p><p className="text-3xl font-bold text-red-600">{districtCount === 48 ? 9 : 8}</p></div>
-            <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100"><p className="text-xs text-gray-500 font-bold mb-1">{t('district.dashboard.detection')}</p><p className="text-2xl font-bold text-amber-500">{districtCount === 48 ? '18.8' : '17.0'}%</p></div>
-            <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100"><p className="text-xs text-gray-500 font-bold mb-1">{t('district.dashboard.coverage')}</p><p className="text-2xl font-bold text-blue-600">35</p></div>
+            <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100"><p className="text-xs text-gray-500 font-bold mb-1">{t('district.dashboard.stats.screenings')}</p><p className="text-3xl font-bold text-gray-900 transition-all duration-500">{districtCount}</p></div>
+            <div className="bg-white rounded-xl shadow-sm p-4 border border-red-200 bg-red-50/30"><p className="text-xs text-gray-500 font-bold mb-1">{t('district.dashboard.stats.highRisk')}</p><p className="text-3xl font-bold text-red-600">{districtCount === 48 ? 9 : 8}</p></div>
+            <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100"><p className="text-xs text-gray-500 font-bold mb-1">{t('district.dashboard.stats.detectionRate')}</p><p className="text-2xl font-bold text-amber-500">{districtCount === 48 ? '18.8' : '17.0'}%</p></div>
+            <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100"><p className="text-xs text-gray-500 font-bold mb-1">{t('district.dashboard.stats.coverage')}</p><p className="text-2xl font-bold text-blue-600">35</p></div>
           </div>
           {districtCount === 48 && (
             <div className="mx-4 bg-amber-50 border-2 border-amber-300 rounded-xl p-4 animate-fade-in-up">
-              <p className="text-amber-800 font-bold flex items-center gap-2"><AlertTriangle size={18} /> ⚠️ 1 New {t('district.dashboard.darkVillages')} — KA001</p>
-              <p className="text-amber-700 text-sm mt-1">{t('district.dashboard.darkVillagesDesc')}</p>
+              <p className="text-amber-800 font-bold flex items-center gap-2"><AlertTriangle size={18} /> ⚠️ 1 New {t('district.dashboard.alert.darkVillages')} — KA001</p>
+              <p className="text-amber-700 text-sm mt-1">{t('district.dashboard.alert.darkVillagesDesc')}</p>
             </div>
           )}
         </div>
