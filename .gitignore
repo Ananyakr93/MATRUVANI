@@ -26,3 +26,10 @@ matruvani.db
 *.pdf
 .pytest_cache/
 .gemini/
+
+# Environment
+.env
+!.env.example
+
+# Docker
+pgdata/

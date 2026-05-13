@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* ── Matruvani Brand Palette ────────────────────────────────────────── */
+  --color-terracotta: #E07A5F;
+  --color-terracotta-dark: #C4623F;
+  --color-terracotta-light: #F0A890;
+  --color-cream: #FDF6EC;
+  --color-cream-dark: #F5E6D0;
+  --color-sage: #8AAE92;
+  --color-sage-dark: #6B9274;
+  --color-sage-light: #B0D0B6;
+  --color-brand-dark: #2D3142;
+  --color-brand-muted: #4F5D75;
+
+  /* ── shadcn / Radix Theme Variables ─────────────────────────────────── */
+  --radius: 0.625rem;
+
+  --color-background: var(--color-cream);
+  --color-foreground: var(--color-brand-dark);
+  --color-card: oklch(0.99 0.005 90);
+  --color-card-foreground: var(--color-brand-dark);
+  --color-popover: oklch(0.99 0.005 90);
+  --color-popover-foreground: var(--color-brand-dark);
+  --color-primary: var(--color-terracotta);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-sage);
+  --color-secondary-foreground: #ffffff;
+  --color-muted: var(--color-cream-dark);
+  --color-muted-foreground: var(--color-brand-muted);
+  --color-accent: var(--color-sage-light);
+  --color-accent-foreground: var(--color-brand-dark);
+  --color-destructive: oklch(0.577 0.245 27.325);
+  --color-destructive-foreground: #ffffff;
+  --color-border: oklch(0.9 0.01 90);
+  --color-input: oklch(0.9 0.01 90);
+  --color-ring: var(--color-terracotta);
+  --color-chart-1: var(--color-terracotta);
+  --color-chart-2: var(--color-sage);
+  --color-chart-3: oklch(0.646 0.222 41.116);
+  --color-chart-4: oklch(0.6 0.118 184.704);
+  --color-chart-5: oklch(0.769 0.188 70.08);
+
+  /* ── Risk Traffic Light Colors ──────────────────────────────────────── */
+  --color-risk-red: #D32F2F;
+  --color-risk-red-bg: #FDECEA;
+  --color-risk-yellow: #F9A825;
+  --color-risk-yellow-bg: #FFF8E1;
+  --color-risk-green: #388E3C;
+  --color-risk-green-bg: #E8F5E9;
+  --color-divergence-bg: #FFF3CD;
+  --color-divergence-border: #FFCA28;
+
+  --font-sans: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif;
+  --font-hindi: 'Noto Sans Devanagari', 'Inter', sans-serif;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+/* ── Base Styles ──────────────────────────────────────────────────────── */
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Custom Animations ────────────────────────────────────────────────── */
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out both;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--color-cream-dark) 25%, var(--color-cream) 50%, var(--color-cream-dark) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* ── Utility Classes ──────────────────────────────────────────────────── */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.hindi {
+  font-family: var(--font-hindi);
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-terracotta-light);
+  border-radius: 999px;
+}
+
+/* ── Print Referral Styles ───────────────────────────────────────────── */
+
+#matruvani-print { display: none; }
+
+@media print {
+  body > *:not(#matruvani-print) { display: none !important; }
+  #matruvani-print { display: block !important; }
+  @page { size: A5 portrait; margin: 10mm; }
+}
