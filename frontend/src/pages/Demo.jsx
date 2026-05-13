@@ -267,7 +267,18 @@ export default function Demo() {
       case 16: return (
         <div className="flex flex-col flex-1 p-6 gap-6 bg-green-50/50">
           <div className="flex flex-col items-center text-center mt-2">
-            <CheckCircle size={64} classNa      // ── SMS (10) ──
+            <CheckCircle size={64} className="text-green-600 mb-3" />
+            <h1 className="text-2xl font-bold text-green-800 mb-3">{t('result.risk.low')}</h1>
+            <div className="px-4 py-1.5 rounded-full text-white font-bold text-sm bg-green-600 shadow-sm">{t('result.score')}: 3/30</div>
+          </div>
+          <div className="border-2 rounded-2xl p-5 bg-green-50 border-green-200 text-green-900">
+            <p className="font-bold text-sm mb-2 opacity-80">{t('result.action.title')}</p>
+            <p className="text-lg font-medium leading-relaxed">{t('result.action.low')}</p>
+          </div>
+        </div>
+      )
+
+      // ── SMS (10) ──
       case 10: return (
         <div className="flex flex-col flex-1 items-center justify-center p-6 gap-6">
           {smsState === 'sending' ? (<>
