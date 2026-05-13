@@ -49,7 +49,7 @@ export default function ASHALogin() {
         setAsha({
           ashaId: res.asha_id,
           district: res.district,
-          state: res.state,
+          stateName: res.state,
           sub_centre: res.sub_centre
         })
         navigate('/asha/home', { replace: true })

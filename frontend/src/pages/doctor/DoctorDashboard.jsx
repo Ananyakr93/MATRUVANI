@@ -11,7 +11,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 
 export default function DoctorDashboard() {
   const navigate = useNavigate()
-  const { district, phcName, state, clearSession } = useAppStore()
+  const { district, phcName, stateName, clearSession } = useAppStore()
   const { t } = useTranslation()
 
   const [isLoading, setIsLoading] = useState(true)
@@ -28,7 +28,7 @@ export default function DoctorDashboard() {
 
   const fetchData = async () => {
     setIsLoading(true)
-    const activeState = state || 'Karnataka'
+    const activeState = stateName || 'Karnataka'
     try {
       const [statsRes, referralsRes, sessionsRes] = await Promise.all([
         get(`/dashboard/stats?district=${district}&state=${activeState}`),

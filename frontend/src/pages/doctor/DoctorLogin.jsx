@@ -24,7 +24,7 @@ export default function DoctorLogin() {
 
   const handleLogin = () => {
     if (!district || !phcName) return
-    setDoctor({ district, phcName, state: "Karnataka" })
+    setDoctor({ district, phcName, stateName: "Karnataka" })
     navigate('/doctor/dashboard')
   }
 

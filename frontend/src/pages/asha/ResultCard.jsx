@@ -10,7 +10,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 export default function ResultCard() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { ashaId, district, state, isOnline, language } = useAppStore()
+  const { ashaId, district, stateName, isOnline, language } = useAppStore()
   const { t } = useTranslation()
 
   const stateData = location.state || {}
@@ -33,16 +33,27 @@ export default function ResultCard() {
     if (!result || sessionRecord) return
 
     const saveSession = async () => {
+      let motherId = "00000000-0000-0000-0000-000000000000"
+
+      if (isOnline && !result.isOffline && motherData) {
+        try {
+          const motherRes = await post('/screening/mother', {
+            asha_id: ashaId,
+            village_code: motherData.villageCode || 'UNKNOWN',
+            gestational_week: motherData.gestationalWeek ? parseInt(motherData.gestationalWeek) : null,
+            days_postpartum: motherData.daysPostpartum ? parseInt(motherData.daysPostpartum) : null,
+            district: district || 'Unknown',
+            state: stateName || 'Karnataka',
+            preferred_language: language || 'hi',
+          })
+          motherId = motherRes.mother_id
+        } catch (err) {
+          console.warn('Mother record creation failed, using placeholder UUID', err)
+        }
+      }
+
       const payload = {
-        mother_data: {
-          asha_id: ashaId,
-          village_code: motherData.villageCode,
-          is_pregnant: motherData.isPregnant,
-          gestational_week: motherData.gestationalWeek ? parseInt(motherData.gestationalWeek) : null,
-          days_postpartum: motherData.daysPostpartum ? parseInt(motherData.daysPostpartum) : null,
-          district: district || "Unknown",
-          state: state || "Karnataka"
-        },
+        mother_id: motherId,
         asha_id: ashaId,
         epds_score: result.epds_score,
         epds_answers: stateData.answers || Array(10).fill(0),
@@ -57,7 +68,7 @@ export default function ResultCard() {
         try {
           const res = await post('/screening/session', payload)
           setSessionRecord(res)
-          setSaveStatus("✓") // Or a translated saved string if available
+          setSaveStatus("✓")
           toast.success("✓")
         } catch (err) {
           console.error("Failed to save session", err)

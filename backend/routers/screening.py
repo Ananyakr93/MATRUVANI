@@ -2,7 +2,7 @@ import json
 import uuid
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
 from backend.database import get_session
@@ -18,45 +18,31 @@ from backend.schemas import (
 
 router = APIRouter(prefix="/screening", tags=["Screening"])
 
-@router.post("/mother", response_model=MotherRecord)
-def create_mother(data: MotherCreate, db: Session = Depends(get_session)):
+@router.post("/mother", response_model=dict)
+def create_mother_record(data: MotherCreate, db: Session = Depends(get_session)):
+    """Create an anonymous MotherRecord for a new screening."""
     new_mother = MotherRecord(
         asha_id=data.asha_id,
-        village_code=data.village_code,
-        is_pregnant=data.is_pregnant,
+        anonymous_token=str(uuid.uuid4()),
         gestational_week=data.gestational_week,
         days_postpartum=data.days_postpartum,
+        village_code=data.village_code,
         district=data.district,
-        state=data.state
+        state=data.state,
+        preferred_language=data.preferred_language,
     )
     db.add(new_mother)
     db.commit()
     db.refresh(new_mother)
-    return new_mother
+    return {"mother_id": str(new_mother.id)}
 
 @router.post("/session", response_model=SessionResponse)
 def create_session(
-    data: SessionCreate, 
+    data: SessionCreate,
     db: Session = Depends(get_session)
 ):
-    mother_id = data.mother_id
-    if not mother_id and data.mother_data:
-        new_mother = MotherRecord(
-            asha_id=data.mother_data.asha_id,
-            village_code=data.mother_data.village_code,
-            is_pregnant=data.mother_data.is_pregnant,
-            gestational_week=data.mother_data.gestational_week,
-            days_postpartum=data.mother_data.days_postpartum,
-            district=data.mother_data.district,
-            state=data.mother_data.state
-        )
-        db.add(new_mother)
-        db.commit()
-        db.refresh(new_mother)
-        mother_id = new_mother.id
-        
     new_session = ScreeningSession(
-        mother_id=mother_id,
+        mother_id=data.mother_id,
         asha_id=data.asha_id,
         epds_score=data.epds_score,
         epds_answers=json.dumps(data.epds_answers),
@@ -66,11 +52,11 @@ def create_session(
         risk_level=data.risk_level,
         session_date=data.session_date
     )
-    
+
     db.add(new_session)
     db.commit()
     db.refresh(new_session)
-    
+
     return new_session
 
 @router.get("/session/{session_id}", response_model=SessionResponse)

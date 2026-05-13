@@ -10,7 +10,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 
 export default function DistrictDashboard() {
   const navigate = useNavigate()
-  const { state, district, clearSession } = useAppStore()
+  const { stateName, district, clearSession } = useAppStore()
   const { t } = useTranslation()
 
   const [isLoading, setIsLoading] = useState(true)
@@ -27,9 +27,9 @@ export default function DistrictDashboard() {
     setIsLoading(true)
     try {
       const [statsRes, heatmapRes, coverageRes] = await Promise.all([
-        get(`/dashboard/stats?district=${district}&state=${state}`),
-        get(`/dashboard/heatmap?state=${state}`),
-        get(`/dashboard/coverage?district=${district}&state=${state}`),
+        get(`/dashboard/stats?district=${district}&state=${stateName}`),
+        get(`/dashboard/heatmap?state=${stateName}`),
+        get(`/dashboard/coverage?district=${district}&state=${stateName}`),
       ])
       
       setStats(statsRes)
@@ -53,7 +53,7 @@ export default function DistrictDashboard() {
 
   useEffect(() => {
     fetchData()
-  }, [district, state])
+  }, [district, stateName])
 
   const handleLogout = () => {
     clearSession()

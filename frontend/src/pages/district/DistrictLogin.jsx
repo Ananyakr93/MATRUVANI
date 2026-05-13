@@ -11,12 +11,12 @@ export default function DistrictLogin() {
   const { setDistrictRole } = useAppStore()
   const { t, language } = useTranslation()
   
-  const [state, setState] = useState("Karnataka")
+  const [stateVal, setStateVal] = useState("Karnataka")
   const [district, setDistrict] = useState('')
 
   const handleLogin = () => {
-    if (!state || !district) return
-    setDistrictRole({ state, district })
+    if (!stateVal || !district) return
+    setDistrictRole({ stateName: stateVal, district })
     navigate('/district/dashboard')
   }
 
@@ -38,7 +38,7 @@ export default function DistrictLogin() {
           
           <div className="flex flex-col gap-2">
             <label className="text-sm font-semibold text-gray-700">{t('district.login.stateLabel')}</label>
-            <Select value={state} onValueChange={setState}>
+            <Select value={stateVal} onValueChange={setStateVal}>
               <SelectTrigger className="w-full h-14 rounded-xl border-2 border-gray-200 text-lg">
                 <SelectValue placeholder={t('district.login.statePlaceholder')} />
               </SelectTrigger>

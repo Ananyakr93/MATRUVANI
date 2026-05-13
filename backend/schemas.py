@@ -8,16 +8,15 @@ from pydantic import BaseModel
 class MotherCreate(BaseModel):
     asha_id: uuid.UUID
     village_code: str
-    is_pregnant: bool
     gestational_week: Optional[int] = None
     days_postpartum: Optional[int] = None
     district: str
     state: str
+    preferred_language: str = 'hi'
 
 
 class SessionCreate(BaseModel):
-    mother_id: Optional[uuid.UUID] = None
-    mother_data: Optional[MotherCreate] = None
+    mother_id: uuid.UUID
     asha_id: uuid.UUID
     epds_score: int
     epds_answers: List[int]
